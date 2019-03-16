@@ -57,7 +57,7 @@ class MainController extends Controller
         if ($request->remember_me) {
             $token->expires_at = Carbon::now()->addWeeks(2);
         }
-        
+
         // save token
         $token->save();
 
@@ -66,5 +66,15 @@ class MainController extends Controller
             'token_type' => 'Bearer',
             'expires_at' => Carbon::parse($tokenObj->token->expires_at)->toDateString(),
         ]);
+    }
+
+    public function logout(Request $request)
+    {
+        // revoke user token
+        $request->user()->token()->revoke();
+
+        return response()->json([
+            'message' => 'Successful logout'
+        ], 200);
     }
 }
